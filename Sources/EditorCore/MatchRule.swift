@@ -17,6 +17,26 @@ public class MatchRule: Rule, Pattern {
     var match: NSRegularExpression
     var captures: [Capture]
     
+    let opts:NSRegularExpression.Options = [.anchorsMatchLines, .dotMatchesLineSeparators]
+    
+    public init(
+        name: String,
+        match: String,
+        options: NSRegularExpression.Options,
+        captures: [Capture] = []
+    ) {
+        self.id = UUID()
+        self.scopeName = ScopeName(rawValue: name)
+        do {
+            self.match = try NSRegularExpression(pattern: match, options: options)
+        }
+        catch {
+            fatalError("Could not create regex for MatchRule with name '\(name)' due to error: \(error.localizedDescription)")
+        }
+        self.captures = captures
+    }
+    
+    
     public init(
         name: String,
         match: String,
@@ -25,7 +45,7 @@ public class MatchRule: Rule, Pattern {
         self.id = UUID()
         self.scopeName = ScopeName(rawValue: name)
         do {
-            self.match = try NSRegularExpression(pattern: match, options: .init(arrayLiteral: .anchorsMatchLines, .dotMatchesLineSeparators))
+            self.match = try NSRegularExpression(pattern: match, options: opts)
         }
         catch {
             fatalError("Could not create regex for MatchRule with name '\(name)' due to error: \(error.localizedDescription)")
